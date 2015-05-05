@@ -14,11 +14,11 @@ class Running implements EntityInterface
      */
     private $runningPaths = [];
 
-    public function __construct($points, FareTable $feeMatrix, StopRepository $stopRepository)
+    public function __construct($points, FareTable $fareTable, StopRepository $stopRepository)
     {
         $this->initialFare = $stopRepository->get($points[0])->getCity()->createInitialFee();
         for ($i = 1; $i < count($points); $i++) {
-            $path = $feeMatrix->addressGet($points[$i - 1], $points[$i]);
+            $path = $fareTable->addressGet($points[$i - 1], $points[$i]);
             $this->runningPaths[] = new RunningPath($path);
         }
     }
