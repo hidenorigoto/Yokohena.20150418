@@ -1,0 +1,30 @@
+{
+    "name": "yokohena/M20150418",
+    "description":" ",
+    "keywords":[
+    ],
+    "license": "BSD-3-Clause",
+    "autoload":{
+        "psr-4":{
+            "Yokohena\\M20150418\\": "src/"
+        }
+    },
+    "autoload-dev":{
+        "psr-4":{
+            "Yokohena\\M20150418\\": "tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-develop": "0.1.x-dev"
+        }
+    },
+    "require": {
+        "phpunit/phpunit": "~4.6",
+        "danielstjules/stringy": "~1.9",
+        "phpmentors/domain-commons": "0.1.*@dev",
+        "phpmentors/domain-kata": "~1.4@dev"
+    }
+}
