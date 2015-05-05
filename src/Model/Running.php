@@ -19,24 +19,21 @@ class Running implements EntityInterface
         $this->initialFare = $stopRepository->get($points[0])->getCity()->createInitialFee();
         for ($i = 1; $i < count($points); $i++) {
             $path = $feeMatrix->addressGet($points[$i - 1], $points[$i]);
-            $runningPath = new RunningPath($path);
-            $this->runningPaths[] = $runningPath;
+            $this->runningPaths[] = new RunningPath($path);
         }
     }
 
     public function run()
     {
-        array_reduce($this->runningPaths, function($rest, $runningPath) {
-            /** @var RunningPath $runningPath */
-            return $runningPath->run($rest, $this->initialFare);
-        }, 0);
-    }
+        $summary = new Summary();
+        $summary->totalFare = $this->initialFare->getFare();
+        $summary->restDistance = $this->initialFare->getDistance();
 
-    public function totalFee()
-    {
-        return array_reduce($this->runningPaths, function ($current, $runningPath) {
+        array_reduce($this->runningPaths, function($summary, $runningPath) {
             /** @var RunningPath $runningPath */
-            return $current + $runningPath->getFare();
-        }, $this->initialFare->getFare());
+            return $runningPath->run($summary);
+        }, $summary);
+
+        return $summary;
     }
 }

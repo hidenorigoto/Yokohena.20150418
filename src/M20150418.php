@@ -61,10 +61,10 @@ class M20150418
     public function solve($input)
     {
         $inputData = $this->parseInput($input);
-
         $running = new Running($inputData, $this->fareTable, $this->stopRepository);
-        $running->run();
-        return $running->totalFee();
+        $summary = $running->run();
+
+        return $summary->totalFare;
     }
 
     public function parseInput($input)

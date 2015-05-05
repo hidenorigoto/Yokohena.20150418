@@ -6,72 +6,28 @@ use PHPMentors\DomainKata\Entity\EntityInterface;
 class RunningPath implements EntityInterface
 {
     /**
-     * メーターアップ回数
-     * @var int
-     */
-    private $meterCount = 0;
-
-    /**
      * @var Path
      */
     private $path;
-
-    /**
-     * この区間での運賃
-     * @var int
-     */
-    private $fare = 0;
 
     public function __construct(Path $path)
     {
         $this->path = $path;
     }
 
-    public function run($initialDistance, InitialFare $initialFee)
+    public function run(Summary $summary)
     {
-        $pathDistance = $this->runWithInitialFare($initialFee);
+        $costDistance = $this->path->getDistance() - $summary->restDistance;
 
-        $distanceDivision = $this->getPath()->getCity()->getDistanceDivision();
-        $restDistance = ($pathDistance + $initialDistance) % $distanceDivision;
-        $this->meterCount += floor(($pathDistance + $initialDistance) / $distanceDivision);
-        $this->fare += $this->meterCount * $this->getPath()->getCity()->getDistanceFare();
-
-        return $restDistance;
-    }
-
-    private function runWithInitialFare(InitialFare $initialFare)
-    {
-        $pathDistance = $this->getPath()->getDistance();
-
-        if ($initialFare->getDistance() === 0) {
-            return $pathDistance;
-        }
-
-        if ($pathDistance > $initialFare->getDistance()) {
-            $pathDistance -= $initialFare->getDistance();
-            $initialFare->setDistance(0);
-            $this->meterCount++;
+        if ($costDistance <= 0) {
+            $summary->restDistance = abs($costDistance);
         } else {
-            $initialFare->runDistance($pathDistance);
-            $pathDistance = 0;
+            $division = $this->path->getCity()->getDistanceDivision();
+            $fare = $this->path->getCity()->getDistanceFare();
+            $summary->restDistance = $division - $costDistance % $division;
+            $summary->totalFare += (floor($costDistance / $division) + 1) * $fare;
         }
 
-        return $pathDistance;
-    }
-
-    /**
-     * @return Path
-     */
-    public function getPath()
-    {
-        return $this->path;
-    }
-
-    /**
-     * @return int
-     */
-    public function getFare()
-    {
-        return $this->fare;
+        return $summary;
     }
 }
